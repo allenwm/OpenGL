@@ -1,33 +1,24 @@
 #include <GL/glut.h>
 #include <math.h>
-const GLfloat factor = 0.1f;
 
 void display(void)
 {
-	GLfloat x;
 	glClear(GL_COLOR_BUFFER_BIT);
-	glPointSize(5.0f);
-	glBegin(GL_POINTS);
-		glVertex2f(-0.5f, 0.5f);
+	glPolygonMode(GL_FRONT, GL_FILL);			//设置正面为填充模式
+	glPolygonMode(GL_BACK, GL_LINE);			//设置反面为线性模式
+	glFrontFace(GL_CCW);							//设置逆时针方向为正面
+	glBegin(GL_POLYGON);							//按逆时针绘制一个正方形，在左下方
+		glVertex2f(-0.5f, -0.5f);
+		glVertex2f(0.0f, -0.5f);
+		glVertex2f(0.0f, 0.0f);
+		glVertex2f(-0.5f, 0.0f);
+	glEnd();
+
+	glBegin(GL_POLYGON);							//按顺时针绘制一个正方形，在左下方
+		glVertex2f(0.0f, 0.0f);
+		glVertex2f(0.0f, 0.5f);
 		glVertex2f(0.5f, 0.5f);
-	glEnd();
-
-	glEnable(GL_LINE_STIPPLE);
-	glLineStipple(2, 0x0F0F);
-	glLineWidth(2.0f);
-	glBegin(GL_LINES);
-		glVertex2f(-1.0f, 0.0f);
-		glVertex2f(1.0f, 0.0f);
-		glVertex2f(0.0f, -1.0f);
-		glVertex2f(-0.0f, 1.0f);
-	glEnd();
-	glDisable(GL_LINE_STIPPLE);
-
-	glBegin(GL_LINE_STRIP);
-	for ( x = -1.0f / factor; x < 1.0 / factor; x+=0.01f)
-	{
-		glVertex2f(x*factor, tan(x)*factor);
-	}
+		glVertex2f(0.5f, 0.0f);
 	glEnd();
 	glFlush();
 }
