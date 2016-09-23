@@ -1,25 +1,32 @@
 #include <GL/glut.h>
 #include <math.h>
+#include <stdlib.h>
+#include <stdio.h>
 
 void display(void)
 {
-	glClear(GL_COLOR_BUFFER_BIT);
-	glPolygonMode(GL_FRONT, GL_FILL);			//设置正面为填充模式
-	glPolygonMode(GL_BACK, GL_LINE);			//设置反面为线性模式
-	glFrontFace(GL_CCW);							//设置逆时针方向为正面
-	glBegin(GL_POLYGON);							//按逆时针绘制一个正方形，在左下方
-		glVertex2f(-0.5f, -0.5f);
-		glVertex2f(0.0f, -0.5f);
-		glVertex2f(0.0f, 0.0f);
-		glVertex2f(-0.5f, 0.0f);
-	glEnd();
+	static GLubyte Mask[128];
+	FILE *fp;
+	fp = fopen("mask.bmp", "rb");
+	if (!fp)
+		exit(0);
 
-	glBegin(GL_POLYGON);							//按顺时针绘制一个正方形，在左下方
-		glVertex2f(0.0f, 0.0f);
-		glVertex2f(0.0f, 0.5f);
-		glVertex2f(0.5f, 0.5f);
-		glVertex2f(0.5f, 0.0f);
-	glEnd();
+	if (fseek(fp, -(int)sizeof(Mask), SEEK_END))
+		exit(0);
+
+	if (!fread(Mask, sizeof(Mask), 1, fp))
+		exit(0);
+
+	fclose(fp);
+
+	glClear(GL_COLOR_BUFFER_BIT);
+	glColor3f(0.0f, 1.0f, 1.0f);
+	glEnable(GL_POLYGON_STIPPLE);
+	glPolygonStipple(Mask);
+	glRectf(-0.5f, -0.5f, 0.0f, 0.0f);   // 在左下方绘制一个有镂空效果的正方形
+	glDisable(GL_POLYGON_STIPPLE);
+	glColor3f(1.0f, 0.0f, 0.0f);
+	glRectf(0.0f, 0.0f, 0.5f, 0.5f);     // 在右上方绘制一个无镂空效果的正方形
 	glFlush();
 }
 
