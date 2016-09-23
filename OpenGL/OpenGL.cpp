@@ -3,30 +3,22 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+const GLdouble Pi = 3.1415926536;
+
 void display(void)
 {
-	static GLubyte Mask[128];
-	FILE *fp;
-	fp = fopen("mask.bmp", "rb");
-	if (!fp)
-		exit(0);
-
-	if (fseek(fp, -(int)sizeof(Mask), SEEK_END))
-		exit(0);
-
-	if (!fread(Mask, sizeof(Mask), 1, fp))
-		exit(0);
-
-	fclose(fp);
-
 	glClear(GL_COLOR_BUFFER_BIT);
-	glColor3f(0.0f, 1.0f, 1.0f);
-	glEnable(GL_POLYGON_STIPPLE);
-	glPolygonStipple(Mask);
-	glRectf(-0.5f, -0.5f, 0.0f, 0.0f);   // 在左下方绘制一个有镂空效果的正方形
-	glDisable(GL_POLYGON_STIPPLE);
-	glColor3f(1.0f, 0.0f, 0.0f);
-	glRectf(0.0f, 0.0f, 0.5f, 0.5f);     // 在右上方绘制一个无镂空效果的正方形
+	glShadeModel(GL_SMOOTH);
+	glShadeModel(GL_FLAT);
+	glBegin(GL_TRIANGLE_FAN);
+		glColor3f(1.0f, 1.0f, 1.0f);
+		glVertex2f(0.0f, 0.0f);
+		for (int i = 0; i <= 8; i++)
+		{
+			glColor3f(i & 0x04, i & 0x02, i & 0x01);
+			glVertex2f(cos(i * Pi / 4), sin(i * Pi / 4));
+		}
+	glEnd();
 	glFlush();
 }
 
